@@ -13,15 +13,13 @@ public class Main {
         try {
             JsonArray tickets = FlightServiceImpl.getInstance().getTicketsFromFile("tickets.json");
             Map<String, List<Flight>> carrierFlights = FlightServiceImpl.getInstance().getFlightsBetweenCities(tickets, "VVO", "TLV");
+            double priceDiff = FlightServiceImpl.getInstance().getPriceDifference(carrierFlights);
+            System.out.println("Разница между средней ценой и медианой: " + priceDiff);
 
             for (String carrier : carrierFlights.keySet()) {
                 List<Flight> flights = carrierFlights.get(carrier);
                 long minFlightTime = FlightServiceImpl.getInstance().getMinFlightTime(flights);
-                double priceDiff = FlightServiceImpl.getInstance().getPriceDifference(flights);
-
                 System.out.println("Минимальное время полета для " + carrier + ": " + minFlightTime + " минут");
-                System.out.println("Разница между средней ценой и медианой для " + carrier + ": " + priceDiff);
-
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

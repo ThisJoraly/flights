@@ -11,5 +11,5 @@ public interface FlightService {
     JsonArray getTicketsFromFile(String fileName) throws FileNotFoundException;
     Map<String, List<Flight>> getFlightsBetweenCities(JsonArray tickets, String origin, String destination);
     long getMinFlightTime(List<Flight> flights);
-    double getPriceDifference(List<Flight> flights);
+    double getPriceDifference(Map<String, List<Flight>> carrierFlights);
 }

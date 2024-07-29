@@ -12,10 +12,8 @@ import java.io.FileReader;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FlightServiceImpl implements FlightService {
 
@@ -66,15 +64,20 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public double getPriceDifference(List<Flight> flights) {
-        double avgPrice = flights.stream().mapToInt(Flight::price).average().orElse(0.0);
-        List<Integer> prices = flights.stream().mapToInt(Flight::price).boxed().sorted().toList();
+    public double getPriceDifference(Map<String, List<Flight>> carrierFlights) {
+        List<Integer> prices = new ArrayList<>();
+        for (List<Flight> flights : carrierFlights.values()) {
+            prices.addAll(flights.stream().mapToInt(Flight::price).boxed().toList());
+        }
+        Collections.sort(prices);
         double medianPrice;
         if (prices.size() % 2 == 0)
             medianPrice = ((double) prices.get(prices.size() / 2) + (double) prices.get(prices.size() / 2 - 1)) / 2;
         else
             medianPrice = (double) prices.get(prices.size() / 2);
-        return Math.abs(avgPrice - medianPrice);
+        double averagePrice = prices.stream().mapToInt(val -> val).average().orElse(0.0);
+        return Math.abs(averagePrice - medianPrice);
     }
+
 
 }
