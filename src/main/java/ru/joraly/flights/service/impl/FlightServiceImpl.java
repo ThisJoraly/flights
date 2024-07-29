@@ -9,7 +9,7 @@ import ru.joraly.flights.service.FlightService;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -38,16 +38,16 @@ public class FlightServiceImpl implements FlightService {
 
     public Map<String, List<Flight>> getFlightsBetweenCities(JsonArray tickets, String origin, String destination) {
         Map<String, List<Flight>> carrierFlights = new HashMap<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy H:mm");
 
         for (JsonElement ticketElement : tickets) {
             JsonObject ticketObject = ticketElement.getAsJsonObject();
 
             if (ticketObject.get("origin").getAsString().equals(origin) && ticketObject.get("destination").getAsString().equals(destination)) {
                 String carrier = ticketObject.get("carrier").getAsString();
-                LocalTime departureTime = LocalTime.parse(ticketObject.get("departure_time").getAsString(), formatter);
-                LocalTime arrivalTime = LocalTime.parse(ticketObject.get("arrival_time").getAsString(), formatter);
-                long flightTime = ChronoUnit.MINUTES.between(departureTime, arrivalTime);
+                LocalDateTime departureDateTime = LocalDateTime.parse(ticketObject.get("departure_date").getAsString() + " " + ticketObject.get("departure_time").getAsString(), formatter);
+                LocalDateTime arrivalDateTime = LocalDateTime.parse(ticketObject.get("arrival_date").getAsString() + " " + ticketObject.get("arrival_time").getAsString(), formatter);
+                long flightTime = ChronoUnit.MINUTES.between(departureDateTime, arrivalDateTime);
                 int price = ticketObject.get("price").getAsInt();
 
                 Flight flight = new Flight(flightTime, price);
